@@ -89,7 +89,7 @@ def interpolate_time_series(
     df = df.copy()
     df = df.sort_values([group_by, time_col])
 
-    def _interp_group(g):
+    def _interp_group(g: pd.DataFrame) -> pd.DataFrame:
         g = g.set_index(time_col)
         g[columns] = g[columns].interpolate(method="time", limit_area="inside")
         return g.reset_index()

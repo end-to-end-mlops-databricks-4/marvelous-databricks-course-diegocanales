@@ -5,7 +5,7 @@ import pandas as pd
 from dotenv import find_dotenv, load_dotenv
 
 
-def setup_duckdb_s3_connection():
+def setup_duckdb_s3_connection() -> duckdb.DuckDBPyConnection:
     """Set up DuckDB connection with S3 credentials from environment variables.
 
     Returns:
@@ -24,7 +24,9 @@ def setup_duckdb_s3_connection():
     return conn
 
 
-def load_weather_data(id_region: int, id_city: int, id_station: int, conn=None) -> pd.DataFrame:
+def load_weather_data(
+    id_region: int, id_city: int, id_station: int, conn: duckdb.DuckDBPyConnection = None
+) -> pd.DataFrame:
     """Load weather data from S3 for a specific station.
 
     Args:
