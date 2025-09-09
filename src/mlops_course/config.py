@@ -1,7 +1,5 @@
 """Configuration file for the project."""
 
-from typing import Any
-
 import yaml
 from pydantic import BaseModel
 
@@ -13,12 +11,8 @@ class ProjectConfig(BaseModel):
     Supports environment-specific configuration overrides.
     """
 
-    num_features: list[str]
-    cat_features: list[str]
-    target: str
     catalog_name: str
     schema_name: str
-    parameters: dict[str, Any]
 
     @classmethod
     def from_yaml(cls, config_path: str, env: str = "dev") -> "ProjectConfig":

@@ -24,7 +24,7 @@ def setup_duckdb_s3_connection():
     return conn
 
 
-def load_weather_data(id_region: int, id_city: int, id_station: int, conn: duckdb.Connection = None) -> pd.DataFrame:
+def load_weather_data(id_region: int, id_city: int, id_station: int, conn=None) -> pd.DataFrame:
     """Load weather data from S3 for a specific station.
 
     Args:

@@ -3,20 +3,23 @@
 # !pip install -e ..
 # %restart_python
 
+# COMMAND ----------
+
 # from pathlib import Path
 # import sys
 # sys.path.append(str(Path.cwd().parent / 'src'))
 
 # COMMAND ----------
-from dotenv import find_dotenv, load_dotenv
+# %load_ext autoreload
+# %autoreload 2
+
+# COMMAND ----------
 from loguru import logger
 from pyspark.sql import SparkSession
 
 from mlops_course.config import ProjectConfig
 from mlops_course.data.ingestion import load_weather_data_sample
 from mlops_course.data_processor import DataProcessor
-
-load_dotenv(find_dotenv())
 
 # COMMAND ----------
 
@@ -28,7 +31,8 @@ spark = SparkSession.builder.getOrCreate()
 
 # COMMAND ----------
 
-df = load_weather_data_sample(data_sample_path="../data/sample/weather_station_data_sample.csv")
+df = load_weather_data_sample(data_sample_path="../tests/test_data/sample.csv")
+df.head()
 
 # COMMAND ----------
 
@@ -50,3 +54,5 @@ data_processor.save_to_catalog(X_train, X_test)
 # COMMAND ----------
 logger.info("Enable change data feed")
 data_processor.enable_change_data_feed()
+
+# COMMAND ----------
