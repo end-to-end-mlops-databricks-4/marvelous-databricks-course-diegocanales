@@ -211,7 +211,7 @@ def select_and_order_columns(df: pd.DataFrame, include_keys: bool = False) -> pd
     """
     temp_cols = [f"t{h:02d}" for h in range(24)]
     feature_cols = temp_cols + [
-        "min_temp_next_day",
+        "min_temp_next_day",  # TODO: remove this column
         "frost_next_day",
     ]
 

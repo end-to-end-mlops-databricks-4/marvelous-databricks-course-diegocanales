@@ -1,5 +1,7 @@
 """Configuration file for the project."""
 
+from typing import Any
+
 import yaml
 from pydantic import BaseModel
 
@@ -13,6 +15,13 @@ class ProjectConfig(BaseModel):
 
     catalog_name: str
     schema_name: str
+    num_features: list[str]
+    target: str
+    parameters: dict[str, Any]
+
+    experiment_name_basic: str | None
+    experiment_name_custom: str | None
+    experiment_name_fe: str | None  # TODO: check why it's called fe
 
     @classmethod
     def from_yaml(cls, config_path: str, env: str = "dev") -> "ProjectConfig":
