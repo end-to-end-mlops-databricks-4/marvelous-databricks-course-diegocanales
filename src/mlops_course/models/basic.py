@@ -45,7 +45,7 @@ class FrostClassificationModel:
         self.schema_name = self.config.schema_name
         self.experiment_name = self.config.experiment_name_basic
         self.model_name = f"{self.catalog_name}.{self.schema_name}.frost_prediction_model_basic"
-        self.tags = tags.dict()
+        self.tags = tags.model_dump()
 
     def load_data(self) -> None:
         """Load training and testing data from Delta tables.

@@ -3,7 +3,7 @@
 from typing import Any
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ProjectConfig(BaseModel):
@@ -19,9 +19,9 @@ class ProjectConfig(BaseModel):
     target: str
     parameters: dict[str, Any]
 
-    experiment_name_basic: str | None
-    experiment_name_custom: str | None
-    experiment_name_fe: str | None  # TODO: check why it's called fe
+    experiment_name_basic: str | None = Field(default=None)
+    experiment_name_custom: str | None = Field(default=None)
+    experiment_name_fe: str | None = Field(default=None)  # TODO: check why it's called fe
 
     @classmethod
     def from_yaml(cls, config_path: str, env: str = "dev") -> "ProjectConfig":
