@@ -1,1 +1,1 @@
-# Makes fixtures a Python package
+"""Fixtures for the mlops_course package."""

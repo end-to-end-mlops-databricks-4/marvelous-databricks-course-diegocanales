@@ -6,8 +6,7 @@ from loguru import logger
 from pyspark.sql import SparkSession
 
 from mlops_course import PROJECT_DIR
-from mlops_course.config import ProjectConfig
-from mlops_course.config import Tags
+from mlops_course.config import ProjectConfig, Tags
 from tests.unit_tests.spark_config import spark_config
 
 
