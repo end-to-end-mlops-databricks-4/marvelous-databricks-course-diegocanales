@@ -272,4 +272,6 @@ def preprocess_weather_data(df: pd.DataFrame) -> pd.DataFrame:
     # 13. Select and order columns
     daily = select_and_order_columns(daily)
 
+    daily = daily.reset_index(drop=True)
+
     return daily

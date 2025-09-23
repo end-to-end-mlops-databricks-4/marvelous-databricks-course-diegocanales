@@ -21,7 +21,7 @@ class ProjectConfig(BaseModel):
 
     experiment_name_basic: str | None = Field(default=None)
     experiment_name_custom: str | None = Field(default=None)
-    experiment_name_fe: str | None = Field(default=None)  # TODO: check why it's called fe
+    experiment_name_fe: str | None = Field(default=None)
 
     @classmethod
     def from_yaml(cls, config_path: str, env: str = "dev") -> "ProjectConfig":

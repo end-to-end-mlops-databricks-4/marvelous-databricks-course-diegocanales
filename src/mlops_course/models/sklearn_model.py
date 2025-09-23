@@ -7,13 +7,13 @@ The model follows the same structure as the house price prediction model but is 
 import mlflow
 import numpy as np
 import pandas as pd
-from lightgbm import LGBMClassifier
 from loguru import logger
 from mlflow import MlflowClient
 from mlflow.data.dataset_source import DatasetSource
 from mlflow.models import infer_signature
 from pyspark.sql import SparkSession
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -21,7 +21,7 @@ from sklearn.preprocessing import StandardScaler
 from mlops_course.config import ProjectConfig, Tags
 
 
-class FrostClassificationModel:
+class SklearnModel:
     """A basic model class for frost prediction using LightGBM.
 
     This class handles data loading, feature preparation, model training, and MLflow logging.
@@ -56,7 +56,7 @@ class FrostClassificationModel:
         self.train_set_spark = self.spark.table(f"{self.catalog_name}.{self.schema_name}.train_set")
         self.train_set = self.train_set_spark.toPandas()
         self.test_set = self.spark.table(f"{self.catalog_name}.{self.schema_name}.test_set").toPandas()
-        self.data_version = "0"  # TODO: I don't understand why we need to set the data version
+        self.data_version = "0"
 
         self.X_train = self.train_set[self.num_features]
         self.y_train = self.train_set[self.target]
@@ -76,7 +76,7 @@ class FrostClassificationModel:
         )
 
         self.pipeline = Pipeline(
-            steps=[("preprocessor", self.preprocessor), ("classifier", LGBMClassifier(**self.parameters))]
+            steps=[("preprocessor", self.preprocessor), ("classifier", RandomForestClassifier(**self.parameters))]
         )
         logger.info("✅ Preprocessing pipeline defined.")
 
@@ -92,14 +92,14 @@ class FrostClassificationModel:
             self.run_id = run.info.run_id
 
             y_pred = self.pipeline.predict(self.X_test)
-            y_prob = self.pipeline.predict_proba(self.X_test)[:, 1]
+            y_prob = self.pipeline.predict_proba(self.X_test)
 
             # Evaluate metrics
             accuracy = accuracy_score(self.y_test, y_pred)
             precision = precision_score(self.y_test, y_pred)
             recall = recall_score(self.y_test, y_pred)
             f1 = f1_score(self.y_test, y_pred)
-            auc = roc_auc_score(self.y_test, y_prob)
+            auc = roc_auc_score(self.y_test, y_prob[:, 1])
 
             logger.info(f"📊 Accuracy: {accuracy:.4f}")
             logger.info(f"📊 Precision: {precision:.4f}")
@@ -108,7 +108,7 @@ class FrostClassificationModel:
             logger.info(f"📊 ROC AUC: {auc:.4f}")
 
             # Log parameters and metrics
-            mlflow.log_param("model_type", "LightGBM Classifier with preprocessing")
+            mlflow.log_param("model_type", "RandomForest Classifier with preprocessing")
             mlflow.log_params(self.parameters)
             mlflow.log_metric("accuracy", accuracy)
             mlflow.log_metric("precision", precision)

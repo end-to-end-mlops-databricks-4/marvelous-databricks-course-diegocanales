@@ -10,6 +10,8 @@ prd:
   catalog_name: mlops_prd
   schema_name: diegocan
 
+experiment_name_basic: /Shared/diegocan_classication_model/
+
 num_features:
   - t00
   - t01
@@ -39,10 +41,9 @@ num_features:
 target: frost_next_day
 
 parameters:
-  learning_rate: 0.1
   n_estimators: 100
   max_depth: 3
-  num_leaves: 31
-  min_child_samples: 20
-  subsample: 0.8
-  colsample_bytree: 0.8
+  min_samples_leaf: 20
+  max_samples: 0.8
+  max_features: 0.8
+  random_state: 42
