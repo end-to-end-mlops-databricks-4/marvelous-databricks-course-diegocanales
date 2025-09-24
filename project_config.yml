@@ -10,7 +10,7 @@ prd:
   catalog_name: mlops_prd
   schema_name: diegocan
 
-experiment_name_basic: /Shared/diegocan_classication_model/
+experiment_name_basic: /Shared/diegocan_classification_model/
 
 num_features:
   - t00
