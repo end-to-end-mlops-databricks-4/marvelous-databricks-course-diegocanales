@@ -25,7 +25,6 @@ class DataProcessor:
 
         This method handles missing values, converts data types, and performs feature engineering.
         """
-        # TODO: Implement the preprocessing logic
         self.df = preprocess_weather_data(self.df)
 
     def split_data(self, test_size: float = 0.2, random_state: int = 42) -> tuple[pd.DataFrame, pd.DataFrame]:
