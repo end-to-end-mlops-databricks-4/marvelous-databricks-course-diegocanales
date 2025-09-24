@@ -1,7 +1,7 @@
 # Databricks notebook source
 # COMMAND ----------
-%load_ext autoreload
-%autoreload 2
+# %load_ext autoreload
+# %autoreload 2
 
 # COMMAND ----------
 import os
