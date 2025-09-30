@@ -274,4 +274,8 @@ def preprocess_weather_data(df: pd.DataFrame) -> pd.DataFrame:
 
     daily = daily.reset_index(drop=True)
 
+    daily["id"] = daily.index + 1
+
+    daily = daily[["id"] + [col for col in daily.columns if col != "id"]]
+
     return daily
