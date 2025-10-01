@@ -22,7 +22,7 @@ dependencies = [
     "ray[tune]==2.47.1",
     "optuna==4.4.0",
     "sdv==1.24.0",
-    "databricks-sdk==0.62.0",
+    "databricks-sdk==0.55.0",
 ]
 
 dynamic = ['version']
