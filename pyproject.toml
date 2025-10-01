@@ -20,8 +20,6 @@ dependencies = [
     "optuna==4.4.0",
     "sdv==1.24.0",
     "databricks-sdk==0.55.0",
-    "databricks-feature-engineering>=0.12.1",
-    "databricks-feature-lookup>=1.6.1"
 ]
 
 dynamic = ['version']
@@ -31,7 +29,8 @@ dev = ["databricks-connect==16.3.5",
        "ipykernel>=6.29.5,<7",
        "pip>=25.0.1, <26",
        "pre-commit>=4.1.0, <5",
-]
+       "databricks-feature-engineering>=0.12.1",
+       "databricks-feature-lookup>=1.6.1"]
 
 test = ["pre-commit>=4.1.0, <5",
        "pytest>=8.0.0, <9",
