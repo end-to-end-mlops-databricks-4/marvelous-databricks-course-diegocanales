@@ -17,6 +17,8 @@ from mlops_course.config import ProjectConfig, Tags
 
 
 class FeatureLookUpModel:
+    """A class to manage FeatureLookupModel."""
+
     def __init__(self, config: ProjectConfig, tags: Tags, spark: SparkSession) -> None:
         self.config = config
         self.spark = spark
@@ -40,6 +42,10 @@ class FeatureLookUpModel:
         self.run_id = None
 
     def create_feature_table(self) -> None:
+        """Create or update the weather_stations_features table and populate it.
+
+        This table stores features related to frost prediction.
+        """
         self.spark.sql(f"""
         CREATE OR REPLACE TABLE {self.feature_table_name} (
         id STRING NOT NULL, t00 DOUBLE, t01 DOUBLE, t02 DOUBLE, t03 DOUBLE, t04 DOUBLE, t05 DOUBLE, t06 DOUBLE, t07 DOUBLE, t08 DOUBLE, t09 DOUBLE, t10 DOUBLE, t11 DOUBLE, t12 DOUBLE, t13 DOUBLE, t14 DOUBLE, t15 DOUBLE, t16 DOUBLE, t17 DOUBLE, t18 DOUBLE, t19 DOUBLE, t20 DOUBLE, t21 DOUBLE, t22 DOUBLE, t23 DOUBLE, frost_next_day INT
@@ -55,7 +61,6 @@ class FeatureLookUpModel:
             f"INSERT INTO {self.feature_table_name} SELECT id, t00, t01, t02, t03, t04, t05, t06, t07, t08, t09, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, frost_next_day FROM {self.catalog_name}.{self.schema_name}.test_set"
         )
         logger.info("✅ Feature table created and populated.")
-
 
     def define_feature_function(self) -> None:
         """Define a function to calculate the median temparature of the day.
@@ -90,6 +95,10 @@ class FeatureLookUpModel:
         logger.info("✅ Data successfully loaded.")
 
     def feature_engineering(self) -> None:
+        """Perform feature engineering by linking data with feature tables.
+
+        Creates a training set using FeatureFunction.
+        """
         self.training_set = self.fe.create_training_set(
             df=self.train_set,
             label=self.target,
@@ -104,7 +113,34 @@ class FeatureLookUpModel:
 
         self.training_df = self.training_set.load_df().toPandas()
         # Calculate median temperature for test set
-        self.test_set["median_temp"] = self.test_set[["t00", "t01", "t02", "t03", "t04", "t05", "t06", "t07", "t08", "t09", "t10", "t11", "t12", "t13", "t14", "t15", "t16", "t17", "t18", "t19", "t20", "t21", "t22", "t23"]].median(axis=1)
+        self.test_set["median_temp"] = self.test_set[
+            [
+                "t00",
+                "t01",
+                "t02",
+                "t03",
+                "t04",
+                "t05",
+                "t06",
+                "t07",
+                "t08",
+                "t09",
+                "t10",
+                "t11",
+                "t12",
+                "t13",
+                "t14",
+                "t15",
+                "t16",
+                "t17",
+                "t18",
+                "t19",
+                "t20",
+                "t21",
+                "t22",
+                "t23",
+            ]
+        ].median(axis=1)
 
         # Define features for training
         self.X_train = self.training_df[self.num_features + ["median_temp"]]
@@ -118,9 +154,7 @@ class FeatureLookUpModel:
 
     def train(self) -> None:
         """Train the model and log results to MLflow."""
-        preprocessor = ColumnTransformer(
-            transformers=[("num", StandardScaler(), self.num_features)], remainder="drop"
-        )
+        preprocessor = ColumnTransformer(transformers=[("num", StandardScaler(), self.num_features)], remainder="drop")
 
         pipeline = Pipeline(
             steps=[("preprocessor", preprocessor), ("classifier", RandomForestClassifier(**self.parameters))]
@@ -164,7 +198,6 @@ class FeatureLookUpModel:
                 training_set=self.training_set,
                 signature=signature,
             )
-
 
     def register_model(self) -> str:
         """Register the model in MLflow registry.
@@ -249,9 +282,9 @@ class FeatureLookUpModel:
 
         # Load predictions from current model
         current_model_uri = f"runs:/{self.run_id}/randomforest-pipeline-model-fe"
-        predictions_current = self.fe.score_batch(
-            model_uri=current_model_uri, df=X_test
-        ).withColumnRenamed("prediction", "prediction_current")
+        predictions_current = self.fe.score_batch(model_uri=current_model_uri, df=X_test).withColumnRenamed(
+            "prediction", "prediction_current"
+        )
 
         # Select only the ID and target columns from test set
         test_set = test_set.select("id", self.target)
@@ -262,14 +295,8 @@ class FeatureLookUpModel:
         df = test_set.join(predictions_current, on="id").join(predictions_latest, on="id")
 
         # Calculate accuracy for each model
-        df = df.withColumn(
-            "correct_current",
-            F.when(F.col(self.target) == F.col("prediction_current"), 1).otherwise(0)
-        )
-        df = df.withColumn(
-            "correct_latest",
-            F.when(F.col(self.target) == F.col("prediction_latest"), 1).otherwise(0)
-        )
+        df = df.withColumn("correct_current", F.when(F.col(self.target) == F.col("prediction_current"), 1).otherwise(0))
+        df = df.withColumn("correct_latest", F.when(F.col(self.target) == F.col("prediction_latest"), 1).otherwise(0))
 
         # Calculate the accuracy for each model
         accuracy_current = df.agg(F.mean("correct_current")).collect()[0][0]

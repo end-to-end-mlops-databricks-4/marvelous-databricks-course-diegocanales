@@ -92,6 +92,7 @@ lint.ignore = [
     "D100", # missing docstring
     "ERA001" # commented out code
 ]
+exclude = ["notebooks"]
 
 [tool.ruff.format]
 indent-style = "space"
