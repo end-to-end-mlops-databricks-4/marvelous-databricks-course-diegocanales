@@ -11,6 +11,7 @@ prd:
   schema_name: diegocan
 
 experiment_name_basic: /Shared/diegocan_classification_model/
+experiment_name_fe: /Shared/diegocan_classification_fe/
 
 num_features:
   - t00
