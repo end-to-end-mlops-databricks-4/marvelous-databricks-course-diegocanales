@@ -68,7 +68,7 @@ dataframe_records = [[record] for record in sampled_records]
 def call_endpoint(record) -> tuple[int, str]:
     """Call the model serving endpoint with a given input record."""
     serving_endpoint = f"https://{os.environ['DBR_HOST']}/serving-endpoints/frost-prediction-model-serving/invocations"
-    
+
     response = requests.post(
         serving_endpoint,
         headers={"Authorization": f"Bearer {os.environ['DBR_TOKEN']}"},
